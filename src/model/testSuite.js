@@ -39,15 +39,7 @@ class TestSuite {
   }
 
   execute(testCaseName) {
-    const onlyRunDescs = this.children.filter((desc) => desc.onlyRun);
-
-    if (onlyRunDescs.length > 0) {
-      this.children
-        .filter((desc) => !desc.onlyRun)
-        .forEach((desc) => {
-          desc.skip();
-        });
-    }
+    this.updateOnlyRunStatus();
 
     this.children.forEach((child) => {
       this.beforeEach && this.beforeEach();
@@ -55,6 +47,19 @@ class TestSuite {
       this.afterEach && this.afterEach();
     });
     this.updateStatus();
+  }
+
+  updateOnlyRunStatus() {
+    const isOnlyRunExisted =
+      this.children.find((desc) => desc.onlyRun) !== undefined;
+
+    if (isOnlyRunExisted) {
+      this.children
+        .filter((desc) => !desc.onlyRun)
+        .forEach((desc) => {
+          desc.skip();
+        });
+    }
   }
 
   updateStatus() {
